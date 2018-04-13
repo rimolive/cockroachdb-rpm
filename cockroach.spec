@@ -1,17 +1,21 @@
 Name:       cockroach
-Version:    v2.0.0
+Version:    2.0.0
 Release:    1%{?dist}
 Summary:    CockroachDB - the open source, cloud-native SQL database
 License:    Apache Public License 2.0
 URL:        https://www.cockroachlabs.com/
-Source0:    https://binaries.cockroachdb.com/%{name}-%{version}.src.tgz
+Source0:    https://binaries.cockroachdb.com/%{name}-v%{version}.src.tgz
 
 
 BuildRequires: gcc
+BuildRequires: gcc-c++
 BuildRequires: golang
 BuildRequires: cmake
 BuildRequires: autoconf
 BuildRequires: ncurses-devel
+BuildRequires: rocksdb-devel #need to remove bundled version
+BuildRequires: zlib-devel
+
 
 %description
 CockroachDB is a distributed SQL database built on a transactional and strongly-consistent 
@@ -21,11 +25,11 @@ strongly-consistent ACID transactions; and provides a familiar SQL API for struc
 manipulating, and querying data.
 
 %prep
-%setup -q
+%setup -q -n %{name}-v%{version}
 
 %build
-%configure
-%make %{_smp_mflags}
+make build
+#make buildoss
 
 %install
 
@@ -36,7 +40,6 @@ manipulating, and querying data.
 
 %files
 
-
 %changelog
-* Thu Apr 12 Ricardo Martinelli de Oliveira <rmartine@redhat.com>
+* Thu Apr 12 2018 Ricardo Martinelli de Oliveira <rmartine@redhat.com> - 2.0.0-1
 - First package version
