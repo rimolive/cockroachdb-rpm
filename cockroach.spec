@@ -1,3 +1,5 @@
+%define debug_package %{nil}
+
 Name:       cockroach
 Version:    2.0.0
 Release:    1%{?dist}
@@ -13,7 +15,8 @@ BuildRequires: golang
 BuildRequires: cmake
 BuildRequires: autoconf
 BuildRequires: ncurses-devel
-BuildRequires: rocksdb-devel #need to remove bundled version
+# need to remove bundled version
+BuildRequires: rocksdb-devel
 BuildRequires: zlib-devel
 
 
@@ -28,17 +31,16 @@ manipulating, and querying data.
 %setup -q -n %{name}-v%{version}
 
 %build
-make build
-#make buildoss
+make buildoss
 
 %install
-
-
-%check
-%make check
+install -Dpm 0755 src/github.com/cockroachdb/cockroach/cockroach %{buildroot}%{_bindir}/cockroach
 
 
 %files
+%{_bindir}/cockroach
+%license  src/github.com/cockroachdb/cockroach/LICENSE
+%doc src/github.com/cockroachdb/cockroach/README.md
 
 %changelog
 * Thu Apr 12 2018 Ricardo Martinelli de Oliveira <rmartine@redhat.com> - 2.0.0-1
