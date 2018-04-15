@@ -7,7 +7,7 @@ Summary:    CockroachDB - the open source, cloud-native SQL database
 License:    Apache Public License 2.0
 URL:        https://www.cockroachlabs.com/
 Source0:    https://binaries.cockroachdb.com/%{name}-v%{version}.src.tgz
-
+Source1:    %{name}.service
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
@@ -18,6 +18,9 @@ BuildRequires: ncurses-devel
 # need to remove bundled version
 BuildRequires: rocksdb-devel
 BuildRequires: zlib-devel
+
+BuildRequires:  systemd
+%{?systemd_requires}
 
 
 %description
@@ -35,12 +38,28 @@ make buildoss
 
 %install
 install -Dpm 0755 src/github.com/cockroachdb/cockroach/cockroach %{buildroot}%{_bindir}/cockroach
+install -Dpm 644 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
+mkdir -p %{buildroot}%{_sysconfdir}/cockroachdb/certs
+mkdir -p %{buildroot}%{_var}/lib/cockroach
+
+
+%post
+%systemd_post cockroach.service
+
+%preun
+%systemd_preun cockroach.service
+
+%postun
+%systemd_postun_with_restart cockroach.service
 
 
 %files
-%{_bindir}/cockroach
-%license  src/github.com/cockroachdb/cockroach/LICENSE
 %doc src/github.com/cockroachdb/cockroach/README.md
+%license  src/github.com/cockroachdb/cockroach/LICENSE
+%{_bindir}/cockroach
+%{_unitdir}/%{name}.service
+%{_var}/lib/cockroach
+
 
 %changelog
 * Thu Apr 12 2018 Ricardo Martinelli de Oliveira <rmartine@redhat.com> - 2.0.0-1

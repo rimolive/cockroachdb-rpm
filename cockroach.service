@@ -1,0 +1,13 @@
+[Unit]
+Description=Cockroach DB
+
+[Install]
+WantedBy=multi-user.target
+
+Service]
+Environment=COCKROACH_HOST=$(hostname)
+Environment=COCKROACH_CERTS_DIR=/etc/cockroach/certs
+ExecStart=/usr/bin/cockroach start --store=/var/lib/cockroach/ --port=26257 --http-port=76224 --logtostderr=ERROR
+ExecStop=/usr/bin/cockroach quit
+SyslogIdentifier=cockroachdb
+Restart=always
